@@ -1,5 +1,5 @@
 from datetime import datetime
-from bot.notion.notion_client import NotionAPI
+from bot.notion.notion_api import NotionAPI
 from bot.config import CHAT_DATABASE_ID
 
 notion_api = NotionAPI()
