@@ -22,5 +22,10 @@ console_handler.setFormatter(formatter)
 # file_handler.setFormatter(formatter)
 # logger.addHandler(file_handler)
 
+# logger.info("...")   # Информационные события
+# logger.debug("...")  # Подробная отладка
+# logger.warning("...")# Предупреждения
+# logger.error("...")  # Ошибки
+
 # Подключаем обработчики к нашему логгеру
 logger.addHandler(console_handler)
