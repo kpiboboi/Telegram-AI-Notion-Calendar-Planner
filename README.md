@@ -7,3 +7,5 @@
 `pip instal aiogram`
 
 `pip install notion-client`
+
+`pip install requests`

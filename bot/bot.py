@@ -1,15 +1,23 @@
+import os
+import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message
 from aiogram.filters import Command
 from notion_client import Client
 from dotenv import load_dotenv
-import os
+from datetime import datetime
+
+from openai import OpenAI
 
 load_dotenv(dotenv_path="bot/.env")
 
 API_TOKEN = os.getenv("TELEGRAM_API_TOKEN")
 NOTION_TOKEN = os.getenv("NOTION_TOKEN")
 DATABASE_ID = os.getenv("NOTION_DATABASE_ID")
+DASHSCOPE_API_KEY = os.getenv("DASHSCOPE_API_KEY")
+QWEN_BASE_URL = os.getenv("QWEN_BASE_URL")
+QWEN_MODEL = os.getenv("QWEN_MODEL")
+CHAT_DATABASE_ID = os.getenv("NOTION_CHAT_DB")
 
 bot = Bot(token=API_TOKEN)
 dp = Dispatcher()
@@ -34,6 +42,15 @@ async def send_tasks(message: Message):
     tasks = await get_tasks()
     response = "\n".join(tasks) if tasks else "Нет задач для отображения."
     await message.answer(f"📋 **Список задач:**\n{response}")
+
+# Команда /start
+@dp.message(Command("start"))
+async def send_start(message: Message):
+    help_text = (
+        "Privet eto bot Notion planner AI assitent\n"
+        "/help - Показать список команд"
+    )
+    await message.answer(help_text)
 
 # Команда /help — показать доступные команды
 @dp.message(Command("help"))
@@ -63,6 +80,44 @@ async def add_task(message: Message):
         }
     )
     await message.answer(f"✅ Задача '{task_name}' добавлена в таблицу Notion.")
+
+def qwen_chat(messages):
+    """
+    Отправляет список сообщений в Qwen и возвращает ответ.
+    messages - формат: [{"role": "user", "content": "..."}, ...]
+    """
+    client = OpenAI(
+        api_key=DASHSCOPE_API_KEY,
+        base_url=QWEN_BASE_URL,
+    )
+    # Создаём чатовое завершение
+    completion = client.chat.completions.create(
+        model=QWEN_MODEL,
+        messages=messages
+    )
+    # Возвращаем текстовое содержание ответа
+    return completion.choices[0].message.content
+
+
+# Команда /ask — пользователь задаёт любой вопрос к Qwen
+@dp.message(Command("ask"))
+async def handle_ask(message: Message):
+    user_input = message.text.replace("/ask", "").strip()
+    if not user_input:
+        await message.answer("Введите вопрос после команды /ask")
+        return
+
+    # Формируем список сообщений для Qwen
+    # Можно добавить "system" роль, если нужна контекстная инструкция
+    messages = [
+        {"role": "system", "content": "You are a helpful AI Assistant."},
+        {"role": "user", "content": user_input}
+    ]
+
+    # Вызываем Qwen для получения ответа
+    answer = qwen_chat(messages)
+    await message.answer(answer)
+
 
 async def main():
     print("Бот успешно запущен!")
