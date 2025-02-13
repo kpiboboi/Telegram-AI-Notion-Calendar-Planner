@@ -1,9 +1,11 @@
 from aiogram.types import Message
 from bot.notion.tasks import get_tasks, add_task
 from bot.utils.logger import logger
+from aiogram.enums import ParseMode
+
 
 async def tasks_command(message: Message):
-    """Выводит список задач из Notion"""
+    #Выводит список задач из Notion
     logger.info(f"Пользователь {message.from_user.id} вызвал /tasks")
     try:
         tasks_list = await get_tasks()
@@ -17,10 +19,11 @@ async def tasks_command(message: Message):
         logger.exception("❌ Ошибка при получении задач из Notion!")
         response = "⚠️ Произошла ошибка при получении задач."
 
-    await message.answer(f"📋 **Список задач:**\n{response}")
+    tasklist = (f"📋 <b>Список задач:</b>\n{response}")
+    await message.answer(tasklist, parse_mode=ParseMode.HTML)
 
 async def addtask_command(message: Message):
-    """Добавляет задачу в Notion"""
+    #Добавляет задачу в Notion
     logger.info(f"Пользователь {message.from_user.id} вызвал /addtask")
     task_name = message.text.replace("/addtask", "").strip()
 

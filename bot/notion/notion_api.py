@@ -3,7 +3,7 @@ from bot.config import NOTION_TOKEN
 
 class NotionAPI:
     def __init__(self):
-        self.AsyncClient = AsyncClient(auth=NOTION_TOKEN)
+        self.client = AsyncClient(auth=NOTION_TOKEN)
 
     async def query_database(self, database_id, query_params):
         return await self.client.databases.query(**query_params, database_id=database_id)
