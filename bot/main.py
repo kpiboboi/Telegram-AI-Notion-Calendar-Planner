@@ -5,12 +5,14 @@ from aiogram import Bot, Dispatcher
 from bot.config import API_TOKEN
 from bot.utils.logger import logger
 from bot.handlers.tasks_handler import tasks_command, addtask_command
+from bot.handlers.start_handler import start_command
 from bot.handlers.help_handler import help_command
 from bot.handlers.qwen_handler import ask_command
 from bot.utils.error_middleware import ErrorMiddleware
 
 def register_handlers(dp: Dispatcher):
     from aiogram.filters import Command
+    dp.message.register(start_command, Command("start"))
     dp.message.register(help_command, Command("help"))
     dp.message.register(tasks_command, Command("tasks"))
     dp.message.register(addtask_command, Command("addtask"))

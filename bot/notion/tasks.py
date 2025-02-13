@@ -5,7 +5,7 @@ from bot.utils.logger import logger
 
 notion_api = NotionAPI()
 
-def get_tasks():
+async def get_tasks():
     logger.debug("Получаем задачи из Notion...")
     try:
         query_params = {
@@ -14,7 +14,7 @@ def get_tasks():
             ]
         }
     
-        results = notion_api.query_database(DATABASE_ID, query_params)
+        results = await notion_api.query_database(DATABASE_ID, query_params)
         tasks = []
 
         for item in results["results"]:
@@ -31,9 +31,9 @@ def get_tasks():
         logger.error(f"Ошибка при запросе к Notion: {e}")
         return []
 
-def add_task(task_name):
+async def add_task(task_name):
     properties = {
         "Ishlar": {"title": [{"text": {"content": task_name}}]},
         "Holat": {"select": {"name": "Boshlanmadi"}}
     }
-    notion_api.create_page(DATABASE_ID, properties) 
+    await notion_api.create_page(DATABASE_ID, properties)
