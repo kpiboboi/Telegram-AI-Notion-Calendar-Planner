@@ -29,3 +29,6 @@ console_handler.setFormatter(formatter)
 
 # Подключаем обработчики к нашему логгеру
 logger.addHandler(console_handler)
+
+logging.getLogger("aiogram").setLevel(logging.INFO)
+logging.getLogger("httpx").setLevel(logging.WARNING)
