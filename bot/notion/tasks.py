@@ -32,8 +32,15 @@ async def get_tasks():
         return []
 
 async def add_task(task_name):
+    logger.info(f"📌 Добавление задачи в Notion: {task_name}")
+
     properties = {
         "Ishlar": {"title": [{"text": {"content": task_name}}]},
         "Holat": {"select": {"name": "Boshlanmadi"}}
     }
-    await notion_api.create_page(DATABASE_ID, properties)
+
+    try:
+        response = await notion_api.create_page(DATABASE_ID, properties)
+        logger.info(f"✅ Успешно добавлена задача в Notion: {response}")
+    except Exception as e:
+        logger.error(f"❌ Ошибка при добавлении задачи в Notion: {e}")

@@ -1,5 +1,5 @@
 import asyncio
-# import logging # for detail loogging
+import logging # for detail loogging
 from aiogram import Bot, Dispatcher
 
 from bot.config import API_TOKEN
@@ -19,7 +19,7 @@ def register_handlers(dp: Dispatcher):
     dp.message.register(ask_command, Command("ask"))
 
 async def main():
-    #logging.basicConfig(level=logging.INFO) # for detail logging only
+    logging.basicConfig(level=logging.INFO) # for detail logging only
     logger.info("🚀 Бот запущен!")
 
     bot = Bot(token=API_TOKEN)
